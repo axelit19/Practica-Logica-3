@@ -36,14 +36,33 @@ distribuir (Or p q) = Or (distribuir p) (distribuir q)
 distribuir (And p q) = And (distribuir p) (distribuir q)
 distribuir p = p
 
-
+negar :: Prop -> Prop
+negar (Var p) = Not (Var p)
+negar (Cons f) = (Cons (not f))
+negar (Not f) = f
+negar (And f1 f2) = (Or (negar f1) (negar f2))
+negar (Or f1 f2) = (And (negar f1) (negar f2))
+negar (Impl f1 f2) = (And f1 (negar f2))
+negar (Syss f1 f2) = negar(And (Impl f1 f2) (Impl f2 f1))
 -- Ejercicio 1
 fnn :: Prop -> Prop
-fnn = undefined
+fnn (Var p) = Var p
+fnn (Cons f) = Cons f
+fnn (Not f) = negar(fnn(f))
+fnn (And f1 f2) = (And (fnn f1) (fnn f2))
+fnn (Or f1 f2) = (Or (fnn f1) (fnn f2))
+fnn (Impl f1 f2) = (Or (negar(fnn f1)) (fnn f2))
+fnn (Syss f1 f2) = (And (fnn (Impl f1 f2)) (fnn (Impl f2 f1)))
 
 -- Ejercicio 2
 fnc :: Prop -> Prop
-fnc = undefined
+fnc (Var p) = fnn (Var p)
+fnc (Cons f) = fnn (Cons f)
+fnc (Not f) = fnn (Not f)
+fnc (And f1 f2) = And (fnc f1) (fnc f2)
+fnc (Or f1 f2) = distribuir (Or (fnc f1) (fnc f2))
+fnc (Impl f1 f2) = distribuir(fnn (Impl f1 f2))
+fnc (Syss f1 f2) = distribuir(fnn (Syss f1 f2))
 
 
 -- 3.3 Resolución Binaria

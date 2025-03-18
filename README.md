@@ -10,6 +10,6 @@ y algoritmo de saturacion.
 - Godinez Hernández Axel Alejandro
 - Sotomayor Carrillo Sita Zoé
 
-#### Fecha de entrega: Viernes 20 de marzo 2025
+#### Fecha de entrega: Jueves 20 de marzo 2025
 
 

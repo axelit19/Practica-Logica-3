@@ -78,12 +78,24 @@ type Clausula = [Literal]
 
 -- Ejercicio 1
 clausulas :: Prop -> [Clausula]
-clausulas = undefined
+clausulas (And p q) = clausulas p ++ clausulas q
+clausular (Or p q) = [extraerLiterales (Or p q)]
+clausulas p = [[p]]
+
+-- Funcion auxiliar para extraer literales de la disyuncion
+extraerLiterales :: Prop -> Clausula
+extraerLiterales (Or p q) = extraerLiterales p ++ extraerLiterales q
+extraerLiterales p = [p]
 
 -- Ejercicio 2
+-- resolucion binaria para dos clausulas
 resolucion :: Clausula -> Clausula -> Clausula
-resolucion = undefined
+resolucion c1 c2 = [l | l <- c1, not (elem (negarLiteral l) c2 || notElem l c2] ++ <-c2, not (elem (negarLiteral l) c1)]
 
+-- Funcion auxiliar para negar un literal
+negarLiteral :: Literal -> Literal
+negarLiteral (Not p) = p
+negarLiteral p = Not p
 
 -- 3.4 Algoritmo de saturación
 

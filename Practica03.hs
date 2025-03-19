@@ -79,7 +79,7 @@ type Clausula = [Literal]
 -- Ejercicio 1
 clausulas :: Prop -> [Clausula]
 clausulas (And p q) = clausulas p ++ clausulas q
-clausular (Or p q) = [extraerLiterales (Or p q)]
+clausulas (Or p q) = [extraerLiterales (Or p q)]
 clausulas p = [[p]]
 
 -- Funcion auxiliar para extraer literales de la disyuncion
@@ -90,8 +90,16 @@ extraerLiterales p = [p]
 -- Ejercicio 2
 -- resolucion binaria para dos clausulas
 resolucion :: Clausula -> Clausula -> Clausula
-resolucion c1 c2 = [l | l <- c1, not (elem (negarLiteral l) c2 || notElem l c2] ++ <-c2, not (elem (negarLiteral l) c1)]
+resolucion c1 c2 = [l | l <- c1, not (elem (negarLiteral l) c2)] ++ [l | l <- c2, not (elem (negarLiteral l) c1)]
 
+--Funcion de Resolucion Binaria vista en la ayudantia
+resolucionBinaria :: Clausula -> Clausula -> Clausula
+resolucionBinaria[]c2= c2
+resolucionBinaria c1[] = c1
+resolucionBinaria (x:xs) ys=
+    if elem (negarLiteral x) ys
+    then xs ++ [l | l <- ys, l /= negarLiteral x]
+    else [x] ++ resolucionBinaria xs ys
 -- Funcion auxiliar para negar un literal
 negarLiteral :: Literal -> Literal
 negarLiteral (Not p) = p
@@ -103,8 +111,41 @@ negarLiteral p = Not p
 
 -- Ejercicio 1
 hayResolvente :: Clausula -> Clausula -> Bool
-hayResolvente = undefined
+hayResolvente [] _ = False
+hayResolvente _ [] = False
+hayResolvente (x:xs) ys = elem (negarLiteral x) ys || hayResolvente xs ys
 
 -- Ejercicio 2
+
+-- Función rsAux para generar los resolventes sin duplicados
+rsAux :: [Clausula] -> [Clausula]
+rsAux [] = []
+rsAux [x] = [x]
+rsAux (x:(y:ys)) = 
+    let res = if hayResolvente x y
+              then [resolucion x y]
+              else []
+    in eliminarDuplicadosRec (x:(y:ys)) ++ res ++ rsAux (x:ys) ++ rsAux (y:ys)
+
+-- Función auxiliar que elimina duplicados
+eliminarDuplicadosRec :: Eq a => [a] -> [a]
+eliminarDuplicadosRec [] = []
+eliminarDuplicadosRec (x:xs)
+  | x `elem` xs = eliminarDuplicadosRec xs
+  | otherwise   = x : eliminarDuplicadosRec xs
+
+--Funcion auxiliar que realiza la saturacion
+saturar :: [Clausula] -> [Clausula]
+saturar cs = saturarAux cs []
+  where
+    saturarAux actuales previas
+      | actuales == previas = actuales  -- Si no hay cambios, terminamos
+      | otherwise =
+          let nuevos = eliminarDuplicadosRec (actuales ++ [resolucion x y | x <- actuales, y <- actuales, x /= y, hayResolvente x y])
+          in saturarAux nuevos actuales  -- Repetimos con los nuevos resolventes
+
 saturacion :: Prop -> Bool
-saturacion = undefined
+saturacion _ = False  --Definicion provisional
+
+
+

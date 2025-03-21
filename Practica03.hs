@@ -141,7 +141,7 @@ saturar cs = saturarAux cs []
     saturarAux actuales previas
       | actuales == previas = actuales  -- Si no hay cambios, terminamos
       | otherwise =
-          let nuevos = eliminarDuplicadosRec (actuales ++ [resolucion x y | x <- actuales, y <- actuales, x /= y, hayResolvente x y])
+          let nuevos = eliminarDuplicadosRec (actuales ++ rsAux actuales)  -- Generamos nuevos resolventes
           in saturarAux nuevos actuales  -- Repetimos con los nuevos resolventes
 
 saturacion :: Prop -> Bool

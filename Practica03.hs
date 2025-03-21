@@ -145,7 +145,10 @@ saturar cs = saturarAux cs []
           in saturarAux nuevos actuales  -- Repetimos con los nuevos resolventes
 
 saturacion :: Prop -> Bool
-saturacion _ = False  --Definicion provisional
+saturacion x =
+  let form = clausulas (fnc x)
+    if saturar(form) == [] then False 
+    else True
 
 
 

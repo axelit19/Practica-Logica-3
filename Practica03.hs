@@ -147,7 +147,7 @@ saturar cs = saturarAux cs []
 saturacion :: Prop -> Bool
 saturacion x =
   let form = clausulas (fnc x)
-    if saturar(form) == [] then False 
+  in if saturar(form) == [] then False 
     else True
 
 
